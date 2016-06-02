@@ -1,0 +1,52 @@
+plugins {
+    id "com.github.hierynomus.license" version "0.12.1"
+    id "com.jfrog.bintray" version "1.6"
+    id 'net.researchgate.release' version '2.3.4'
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'license'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'osgi'
+apply plugin: 'java-library-distribution'
+
+release {
+    tagTemplate = 'v${version}'
+    failOnPublishNeeded = false
+}
+
+publishing {
+        publications {
+            Publication(MavenPublication) {
+                from components.java
+                groupId 'org.unprotocols'
+                artifactId project.name
+                version project.version
+            }
+        }
+}
+
+bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        publications = ['Publication']
+        publish = true
+        pkg {
+            repo = 'maven'
+            name = project.name
+            userOrg = 'unprotocols'
+            licenses = ['MPL-2.0']
+            vcsUrl = 'https://github.com/unprotocols/coss-java'
+            version {
+                name = project.version
+            }
+        }
+}
+
+repositories {
+    jcenter()
+}
+
